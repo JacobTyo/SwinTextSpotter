@@ -23,6 +23,7 @@ from detectron2.data import MetadataCatalog, build_detection_train_loader
 from detectron2.engine import AutogradProfiler, DefaultTrainer, default_argument_parser, default_setup, launch
 from detectron2.evaluation import COCOEvaluator, verify_results, TextEvaluator
 from detectron2.solver.build import maybe_add_gradient_clipping
+from detectron2.data.datasets import register_coco_instances
 
 from swints import SWINTSDatasetMapper, add_SWINTS_config
 
@@ -129,6 +130,10 @@ def main(args):
 
 
 if __name__ == "__main__":
+    # register the perph datasets
+    print("registering PerPh Datasets")
+    register_coco_instances("perph_train", {}, "/workspace/data/perph/perph_swints_tr.json", "/workspace/data/perph/images")
+    register_coco_instances("perph_test", {}, "/workspace/data/perph/perph_swints_te.json", "/workspace/data/perph/images")
     args = default_argument_parser().parse_args()
     print("Command Line Args:", args)
     launch(
