@@ -133,7 +133,9 @@ if __name__ == "__main__":
     # register the perph datasets
     print("registering PerPh Datasets")
     register_coco_instances("perph_train_custom", {}, "/workspace/SwinTextSpotter/data/perph/perph_swints_tr.json", "/workspace/SwinTextSpotter/data/perph/images")
-    register_coco_instances("perph_test_custom", {}, "/workspace/SwinTextSpotter/data/perph/perph_swints_te_small.json", "/workspace/SwinTextSpotter/data/perph/images")
+    register_coco_instances("perph_test_custom", {}, "/workspace/SwinTextSpotter/data/perph/perph_swints_te.json", "/workspace/SwinTextSpotter/data/perph/images")
+    register_coco_instances("perph_test_custom_small", {}, "/workspace/SwinTextSpotter/data/perph/perph_swints_te_small.json",
+                            "/workspace/SwinTextSpotter/data/perph/images")
     args = default_argument_parser().parse_args()
     print("Command Line Args:", args)
     launch(
