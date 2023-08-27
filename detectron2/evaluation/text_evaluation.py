@@ -100,7 +100,7 @@ class TextEvaluator(DatasetEvaluator):
 
         with open(file_path, 'r') as f:
             data = json.load(f)
-            with open('/tmp/temp_all_det_cors.txt', 'w') as f2:
+            with open(os.path.join(self._output_dir, 'temp_all_det_cors.txt'), 'w') as f2:
                 for ix in range(len(data)):
                     if data[ix]['score'] > 0.1:
                         outstr = '{}: '.format(data[ix]['image_id'])
@@ -120,7 +120,7 @@ class TextEvaluator(DatasetEvaluator):
                 f2.close()
         dirn = temp_dir
         lsc = [cf_th] 
-        fres = open('/tmp/temp_all_det_cors.txt', 'r').readlines()
+        fres = open(os.path.join(self._output_dir, 'temp_all_det_cors.txt'), 'r').readlines()
         for isc in lsc:	
             if not os.path.isdir(dirn):
                 os.mkdir(dirn)
@@ -137,7 +137,7 @@ class TextEvaluator(DatasetEvaluator):
                         continue
                     cors = ','.join(e for e in ptr[0].split(',')[:-1])
                     fout.writelines(cors+',####'+ptr[1]+'\n')
-        os.remove("/tmp/temp_all_det_cors.txt")
+        os.remove(os.path.join(self._output_dir, 'temp_all_det_cors.txt'))
 
     def sort_detection(self, temp_dir):
         origin_file = temp_dir
