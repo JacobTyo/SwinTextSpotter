@@ -70,6 +70,7 @@ class TextEvaluator(DatasetEvaluator):
             self._text_eval_gt_path = "datasets/evaluation/gt_vintext.zip"
             self._word_spotting = True
         elif "custom" in dataset_name:
+            self.lexicon_type = None
             self._text_eval_gt_path = "datasets/evaluation/gt_custom.zip"
             self._word_spotting = False
         self._text_eval_confidence = cfg.TEST.INFERENCE_TH_TEST
