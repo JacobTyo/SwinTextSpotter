@@ -19,14 +19,14 @@ MODEL:
   MASK_ON: True
   REC_HEAD:
     BATCH_SIZE: 48
-  WEIGHTS: "/workspace/models/tt_model_final.pth"
+  WEIGHTS: "/workspace/SwinTextSpotter/weights/tt_model_final.pth"
   SWINTS:
     NUM_PROPOSALS: 300
     NUM_CLASSES: 2
 SOLVER:
   STEPS: (6000,)
-  MAX_ITER: 10000
-  CHECKPOINT_PERIOD: 1000
+  MAX_ITER: 200000
+  CHECKPOINT_PERIOD: 2000
   IMS_PER_BATCH: 2
   BASE_LR: 0.000025
   WARMUP_FACTOR: 0.01
@@ -52,10 +52,10 @@ INPUT:
   MIN_SIZE_TEST: 1000
   MAX_SIZE_TEST: 1824
 TEST:
-  EVAL_PERIOD: 1000
+  EVAL_PERIOD: 2000
 DATASETS:
-  TRAIN: ("perph_train",)
-  TEST:  ("perph_test",)
+  TRAIN: ("perph_train_custom",)
+  TEST:  ("perph_test_custom",)
 DATALOADER:
   FILTER_EMPTY_ANNOTATIONS: True
   NUM_WORKERS: 4

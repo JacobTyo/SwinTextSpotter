@@ -23,8 +23,8 @@ MODEL:
     NUM_CLASSES: 2
 SOLVER:
   STEPS: (6000,)
-  MAX_ITER: 10000
-  CHECKPOINT_PERIOD: 1000
+  MAX_ITER: 200000
+  CHECKPOINT_PERIOD: 2000
   IMS_PER_BATCH: 1
   BASE_LR: 0.000025
   WARMUP_FACTOR: 0.01
@@ -55,6 +55,6 @@ DATALOADER:
   NUM_WORKERS: 4
 DATASETS:
   TRAIN: ("perph_train_custom",)
-  TEST:  ("perph_test_custom",)
+  TEST:  ("perph_test_custom_small",)
 VERSION: 2
 OUTPUT_DIR: /root/swints_base_output_tt

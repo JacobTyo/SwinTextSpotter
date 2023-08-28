@@ -35,6 +35,8 @@ class TextEvaluator(DatasetEvaluator):
         self._distributed = distributed
         self._output_dir = output_dir
 
+        self._temp_dir = os.path.join(self._output_dir, "temp")
+
         self._cpu_device = torch.device("cpu")
         self._logger = logging.getLogger(__name__)
 
@@ -87,6 +89,9 @@ class TextEvaluator(DatasetEvaluator):
             self._predictions.append(prediction)
 
     def to_eval_format(self, file_path, temp_dir="temp_det_results", cf_th=0.5):
+        temp_dir = os.path.join(self.temp_dir, "temp_det_results")
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
         def fis_ascii(s):
             a = (ord(c) < 128 for c in s)
             return all(a)
@@ -141,8 +146,8 @@ class TextEvaluator(DatasetEvaluator):
 
     def sort_detection(self, temp_dir):
         origin_file = temp_dir
-        output_file = "final_"+temp_dir
-        output_file_full = "full_final_"+temp_dir
+        output_file = temp_dir+"final"
+        output_file_full = temp_dir+"_full_final"
         if not os.path.isdir(output_file_full):
             os.mkdir(output_file_full)
         if not os.path.isdir(output_file):
@@ -247,8 +252,8 @@ class TextEvaluator(DatasetEvaluator):
                         line=line.strip()
                         lexicon.append(line)
             else:
-                out = i.replace(origin_file, output_file)
-                out_full = i.replace(origin_file, output_file_full)
+                out = os.path.join(origin_file, output_file)
+                out_full = os.path.join(origin_file, output_file_full)
             fin = open(i, 'r').readlines()
             fout = open(out, 'w')
             fout_full = open(out_full, 'w')
@@ -358,7 +363,7 @@ class TextEvaluator(DatasetEvaluator):
         # eval text
         if not self._text_eval_gt_path:
             return copy.deepcopy(self._results)
-        temp_dir = "temp_det_results/"
+        temp_dir = os.path.join(self._output_dir, "temp_det_results/")
         self.to_eval_format(file_path, temp_dir, self._text_eval_confidence)
         result_path, result_path_full = self.sort_detection(temp_dir)
         text_result = self.evaluate_with_official_code(result_path, self._text_eval_gt_path) # None 
