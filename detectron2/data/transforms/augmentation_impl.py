@@ -34,6 +34,83 @@ __all__ = [
 ]
 
 
+class SpeckleTransform(Transform):
+    def __init__(
+            self,
+            fill_value: int = -1,
+            number_speckles: int = 15,
+            max_speckle_size: int = 10,
+            max_speckle_aspect_ratio: float = 0.5
+    ):
+        """
+        Args:
+            fill_value: the value to fill the speckle with, if -1, fill with noise
+            number_speckles: the number of speckles to add
+            max_speckle_size: the maximum size of a speckle
+            max_speckle_aspect_ratio: the maximum aspect ratio of a speckle
+        """
+        super().__init__()
+        self._set_attributes(locals())
+
+    def apply_image(self, img: np.ndarray) -> np.ndarray:
+        """
+        Generate and apply all speckles as a single operation.
+
+        Args:
+            img: (H, W, C) array in range [0, 255] or [0, 1]
+        Returns:
+            img: (H, W, C) array in range [0, 255] or [0, 1]
+        """
+        if self.fill_value == -1:
+            img = self._add_noise(img)
+        else:
+            img = self._add_color(img)
+        return img
+
+    def _add_noise(self, img: np.ndarray) -> np.ndarray:
+        """
+        Generate and apply all speckles as a single operation.
+
+        Args:
+            img: (H, W, C) array in range [0, 255] or [0, 1]
+        Returns:
+            img: (H, W, C) array in range [0, 255] or [0, 1]
+        """
+        h, w, c = img.shape
+        for _ in range(self.number_speckles):
+            speckle_size = random.randint(1, self.max_speckle_size)
+            speckle_aspect_ratio = random.uniform(0, self.max_speckle_aspect_ratio)
+            speckle_h = int(np.sqrt(speckle_size / speckle_aspect_ratio))
+            speckle_w = int(speckle_aspect_ratio * speckle_h)
+            speckle_x = random.randint(0, w - speckle_w)
+            speckle_y = random.randint(0, h - speckle_h)
+            img[speckle_y:speckle_y + speckle_h, speckle_x:speckle_x + speckle_w, :] = np.random.randint(0, 255, (speckle_h, speckle_w, c))
+        return img
+
+    def _add_color(self, img: np.ndarray) -> np.ndarray:
+        """
+        Generate and apply all speckles as a single operation.
+
+        Args:
+            img: (H, W, C) array in range [0, 255] or [0, 1]
+        Returns:
+            img: (H, W, C) array in range [0, 255] or [0, 1]
+        """
+        h, w, c = img.shape
+        for _ in range(self.number_speckles):
+            speckle_size = random.randint(1, self.max_speckle_size)
+            speckle_aspect_ratio = random.uniform(0, self.max_speckle_aspect_ratio)
+            speckle_h = int(np.sqrt(speckle_size / speckle_aspect_ratio))
+            speckle_w = int(speckle_aspect_ratio * speckle_h)
+            speckle_x = random.randint(0, w - speckle_w)
+            speckle_y = random.randint(0, h - speckle_h)
+            img[speckle_y:speckle_y + speckle_h, speckle_x:speckle_x + speckle_w, :] = self.fill_value
+        return img
+
+    def inverse(self) -> Transform:
+        raise NotImplementedError("Inverse is not implemented for SpeckleTransform")
+
+
 class RandomApply(Augmentation):
     """
     Randomly apply an augmentation with a given probability.
@@ -225,6 +302,24 @@ class RandomRotation(Augmentation):
         return RotationTransform(h, w, angle, expand=self.expand, center=center, interp=self.interp)
 
 
+class RandomSpeckles(Augmentation):
+    def __init__(self,
+            fill_value: int = -1,
+            number_speckles: int = 15,
+            max_speckle_size: int = 10,
+            max_speckle_aspect_ratio: float = 0.5):
+        super().__init__()
+        self._init(locals())
+
+    def get_transform(self, image):
+        return SpeckleTransform(
+            fill_value=self.fill_value,
+            number_speckles=self.number_speckles,
+            max_speckle_size=self.max_speckle_size,
+            max_speckle_aspect_ratio=self.max_speckle_aspect_ratio
+        )
+
+
 class RandomCrop(Augmentation):
     """
     Randomly crop a rectangle region out of an image.
@@ -285,6 +380,28 @@ class RandomCrop(Augmentation):
             return ch, cw
         else:
             NotImplementedError("Unknown crop type {}".format(self.crop_type))
+
+
+# class RandomSpecks(Augmentation):
+#     """
+#     Randomly apply randon number of speckles, of random sizes, to an image. The specles can either be black,
+#     random noise, or random colors. The speckles are added to the image with a random probability.
+#     """
+#
+#     def __init__(self, mean_number_of_speckles: int, max_speckle_size: int, speckle_type: str = "any", speckle_prob: float = 0.5):
+#         """
+#         Args:
+#             mean_number_of_speckles (int): the mean number of speckles to add to the image (Poisson distribution)
+#             max_speckle_size (int): the maximum size of a speckle (in pixels)
+#             speckle_type (str): the type of speckle to add to the image. One of "any", "black", "noise", "color"
+#             speckle_prob (float): the probability of adding a speckle to the image
+#         """
+#         super().__init__()
+#         self._init(locals())
+#
+#     def get_transform(self, image):
+
+
 
 
 class RandomCrop_CategoryAreaConstraint(Augmentation):

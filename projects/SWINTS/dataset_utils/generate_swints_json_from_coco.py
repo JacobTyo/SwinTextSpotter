@@ -17,14 +17,15 @@ with open(coco_file_path, 'r') as f:
 
 # Function to convert the text into numerical representations
 def convert_text(text):
-    max_len = 100
-    recs = [len(cV2) for _ in range(max_len)]
+    max_len = 10
+    recs = [0 for _ in range(max_len)]
     for ix, ict in enumerate(text):
-        if ix >= max_len: continue
+        if ix >= max_len:
+            continue
         if ict in cV2:
-            recs[ix] = cV2.index(ict)
+            recs[ix] = cV2.index(ict) + 1
         else:
-            recs[ix] = len(cV2)
+            recs[ix] = 0
     return recs
 
 # Modify the annotations as needed
